@@ -117,23 +117,45 @@ Pour implémenter l’attaque :
 - Tenter une connexion au réseau (ne pas utiliser vos identifiants réels)
 - Utiliser un outil de brute-force (```john```, ```hashcat``` ou ```asleap```, par exemple) pour attaquer le hash capturé (utiliser un mot de passe assez simple pour minimiser le temps)
 
+### Manips
+
+![img.png](img.png)
+
+```
+username:      damien
+         challenge:     6a:48:28:41:10:8c:24:04
+         response:      f0:81:5a:a2:45:6b:ee:15:92:b7:9d:d7:80:d9:32:bc:cd:fc:a7:72:cc:eb:e1:ca
+         jtr NETNTLM:           damien:$NETNTLM$6a482841108c2404$f0815aa2456bee1592b79dd780d932bccdfca772ccebe1ca
+         hashcat NETNTLM:       damien::::f0815aa2456bee1592b79dd780d932bccdfca772ccebe1ca:6a482841108c2404
+```
+
+![img_1.png](img_1.png)
+
 ### Répondez aux questions suivantes :
 
 > **_Question :_** Quelles modifications sont nécessaires dans la configuration de hostapd-wpe pour cette attaque ?
 > 
-> **_Réponse :_** 
+> **_Réponse :_**
+> 
+> Indiquer l'interface qu'on utilise pour créer l'AP : `interface=wlan0`
+> Indiquer le SSID du faux réseau : `ssid=HEIG-FAKE`
+> On peut encore configurer d'autres choses comme le canal utilisé, mais en l'occurrence les valeurs par défaut sont bonnes.
 
 ---
 
 > **_Question:_** Quel type de hash doit-on indiquer à john ou l'outil que vous avez employé pour craquer le handshake ?
 > 
 > **_Réponse:_** 
+> Nous avons utilisé hashcat avec comme type de hash NetNTLMv1. Flag `-m 5500` 
 
 ---
 
 > **_Question:_** Quelles méthodes d’authentification sont supportées par hostapd-wpe ?
 > 
 > **_Réponse:_**
+> D'après la documentation :
+> 
+> hostapd-wpe supports the following EAP types for impersonation: 1. EAP-FAST/MSCHAPv2 (Phase 0) 2. PEAP/MSCHAPv2 3. EAP-TTLS/MSCHAPv2 4. EAP-TTLS/MSCHAP 5. EAP-TTLS/CHAP 6. EAP-TTLS/PAP
 
 
 ### 3. En option, vous pouvez explorer d'autres outils comme [eapeak](https://github.com/rsmusllp/eapeak) ou [crEAP](https://github.com/W9HAX/crEAP/blob/master/crEAP.py) pour les garder dans votre arsenal de pentester.
