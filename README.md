@@ -66,17 +66,108 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 	- Authentification interne et transmission de la clé WPA (échange chiffré, vu par Wireshark comme « Application data »)
 	- 4-way handshake
 
+### Comparaison capture Wireshark et théorie
+
+Certaines captures d'écran ont été prise de la capture Wireshark que nous avons effectuée, malheureusement il manque certaines parties dans celle-ci (par exemple pour les méthode d'authentifications proposées nous n'avons pas de EAP-TLS mais directement du PEAP). C'est pourquoi nous avons aussi des captures d'écran venant de la capture Wireshark fournie.
+
+#### Requête et réponse d’authentification système ouvert
+
+Les captures d'écrans de cette section sont prises depuis notre capture Wireshark.
+
+Voici la requête envoyée par le client :
+
+![auth_request](./img/open_auth_request.png)
+
+Nous pouvons voir dans l'en-tête IEEE 802.11 Wireless Management qu'il s'agit bien d'un système ouvert (champ `Authentication Algorithm`). Lorsqu'il s'agit d'une requête d'authentification le champ `Authentication SEQ` contient la valeur `0x0001`, il s'agit donc bien d'une trame allant d'un client vers l'AP.
+
+Voici la réponse de l'AP :
+
+![auth_response](./img/open_auth_response.png)
+
+Dans l'en-tête IEEE 802.11 Wireless Management nous pouvons voir cette fois-ci qu'il s'agit de la séquence numéro 2, il s'agit donc d'une réponse à une requête. La trame vient bien d'un AP en direction d'un client ayant fait une requête.
+
+#### Requête et réponse d’association (ou reassociation)
+
+Les captures d'écrans de cette section sont prises depuis notre capture Wireshark.
+
+Voici la requête envoyée par le client :
+
+![association_request](./img/association_request.png)
+
+Nous pouvons voir dans l'encadré rouge qu'il s'agit bien d'une requête d'association.
+Dans l'en-tête IEEE 802.11 Wireless Management on peut voir différents champs dont celui contenant le SSID de l'AP (ici `HEIG-VD`). Le reste des informations concernent les différentes propriétés que supporte le client (débit, channels, etc...).
+
+Voici la réponse envoyée par l'AP :
+
+![association_response](./img/association_response.png)
+
+Ici l'encadré rouge montre qu'il s'agit d'une réponse d'association. Dans l'en-tête IEEE 802.11 Wireless Management on peut voir le status code à `Successful`, ce qui nous montre que l'association a été réussie. Juste en dessous nous pouvons voir l'`Association ID` qui est un ID lié au client (ici `0x0002`). Le reste des paramètres sont les différentes propriétés supportées par l'AP.
+
+Nous pouvons noter que pour l'authentification et pour l'association le protocole utilisé est 802.11. Maintenant nous avons terminé la séquence du système ouvert. Nous allons passer à la négociation d'authentification entreprise.
+
+#### Négociation de la méthode d’authentification entreprise
+
+Pour cette partie nous avons eu quelques soucis avec notre capture Wireshark, en effet nous n'avons pas le même déroulement que dans la capture Wireshark d'exemple. Dans la capture d'exemple l'AP propose d'abord d'utiliser la méthode `EAP-TLS`, cette trame n'existe pas dans notre capture, il nous est directement proposé d'utiliser `EAP-PEAP`. C'est pourquoi les captures présentes dans cette section proviennent de la capture Wireshark d'exemple.
+
+Afin de faire la négociation d'authentification, l'AP va envoyer une trame en définissant la méthode qu'il souhaite utiliser. Le client aura la liberté d'accepter (en envoyant un `ACK`) ou alors de refuser (en envoyer un `NACK`) la méthode. Si le client refuse la méthode, l'AP proposera une autre méthode au client et on recommence le même processus.
+
+Voici la trame qu'envoie l'AP :
+
+![eap_TLS_negociation](./img/eap_TLS_negociation.PNG)
+
+Nous pouvons voir qu'ici l'AP fait une request au client pour lui proposer d'utiliser l'authentification `EAP-TLS`. On peut voir que la méthode proposée est encapsulée dans EAP (qui est 802.1X).
+
+Voici la trame qu'envoie le client :
+
+![eap_TLS_negociation_refuse](./img/eap_TLS_negociation_refuse.PNG)
+
+On peut voir que le client envoie un `Nak` car il refuse d'utiliser cette méthode. Il renseigne dans le champ `Desired Auth Type` la méthode d'authentification qu'il souhaite utiliser. Ici il s'agit de la méthode `EAP-PEAP`.
+
+Donc l'AP va ensuite envoyer une nouvelle trame avec la méthode demandée par le client :
+
+![eap_PEAP_negociation_refuse](./img/eap_PEAP_negociation.PNG)
+
+Les messages de la négociation utilisent tous le protocole EAP (802.11x).
+
+#### Phase d’initiation
+
+Les captures d'écrans de cette section sont prises depuis notre capture Wireshark.
+
+Dans la phase d'initiation, le client envoie dans un premier temps un paquet EAPOL `start` :
+
+![initiation_phase_start](./img/initiation_phase_start.PNG)
+
+Ce paquet va permettre d'initier le processus d'authentification. Ensuite l'AP va demander au client de déclarer son identité en utilisant un paquet `request` ayant comme type `Identity` :
+
+![initiation_phase_request_identity](./img/initiation_phase_request_identity.PNG)
+
+Puis le client va ensuite envoyer un paquet `Response` avec le type `Identity` :
+
+![initiation_phase_response_identity](./img/initiation_phase_response_identity.PNG)
+
+Nous pouvons voir dans ce paquet qu'une identité est fournie, ici il s'agit de `einet\olivier.tissotda`. Ensuite l'AP pourra communiquer avec un serveur d'authentification (RADIUS par exemple) afin de faire un Access-Request. La prochaine étape va être l'établissement d'un tunnel TLS.
+
+#### Phase hello
+
+Les paquets "request , protected EAP (PEAP)" sont les paquets envoyés par le serveur d'authentification pour faire le "hello server" TLS.
+
+### trucs utile, à enlever quand on rendra
+
+https://www.arubanetworks.com/techdocs/ClearPass/6.7/Aruba_DeployGd_HTML/Content/A%20802.1X%20EAP-PEAP%20Reference/EAP_PEAP_handshake.htm#About
+
+filtre utilisé pour simplifier la vue : !wlan.fc.type_subtype == 5 && !wlan.fc.type_subtype == 4 && !llc.dsap == 0x32
+
 ### Répondez aux questions suivantes :
  
 > **_Question :_** Quelle ou quelles méthode(s) d’authentification est/sont proposé(s) au client ?
 > 
-> **_Réponse :_** 
+> **_Réponse :_** Dans notre capture Wireshark, uniquement la méthode EAP-PEAP est proposée par l'AP mais dans la capture Wireshark d'exemple, dans un premier temps la méthode EAP-TLS est proposée puis la méthode EAP-PEAP est proposée au client.
 
 ---
 
 > **_Question:_** Quelle méthode d’authentification est finalement utilisée ?
 > 
-> **_Réponse:_** 
+> **_Réponse:_** La méthode EAP-PEAP est utilisée par le client dans les deux captures.
 
 ---
 
