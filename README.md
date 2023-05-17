@@ -121,7 +121,7 @@ Pour implémenter l’attaque :
 
 > **_Question :_** Quelles modifications sont nécessaires dans la configuration de hostapd-wpe pour cette attaque ?
 > 
-> **_Réponse :_** Il faut modifier le SSID.
+> **_Réponse :_** Il faut modifier le SSID et l'interface.
 
 ---
 
@@ -143,6 +143,8 @@ Pour implémenter l’attaque :
 5. EAP-TTLS/CHAP
 6. EAP-TTLS/PAP
 
+![output hostpapd](image/hostapd.png)
+![mdp trouvé](image/recovered_passwords.png)
 
 ### 3. En option, vous pouvez explorer d'autres outils comme [eapeak](https://github.com/rsmusllp/eapeak) ou [crEAP](https://github.com/W9HAX/crEAP/blob/master/crEAP.py) pour les garder dans votre arsenal de pentester.
 
