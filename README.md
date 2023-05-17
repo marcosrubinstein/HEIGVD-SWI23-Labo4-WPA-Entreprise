@@ -127,7 +127,7 @@ Pour implémenter l’attaque :
 
 > **_Question:_** Quel type de hash doit-on indiquer à john ou l'outil que vous avez employé pour craquer le handshake ?
 > 
-> **_Réponse:_** NETNTLM
+> **_Réponse:_** NETNTLM. Dans la doc il est écrit: Alternatively MSCHAPv2 credentials are outputted in john the rippers NETNTLM format.
 
 ---
 
