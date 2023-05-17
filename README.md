@@ -119,6 +119,10 @@ Pour implémenter l’attaque :
 
 ### Manips
 
+Nous créons le réseau malveillant. Ensuite nous tentons de nous y connecter avec le nom d'utilisateur `damien` et le mot de passe `1234`.
+
+Voilà ce que ça donne dans le terminal :
+
 ![img.png](img.png)
 
 ```
@@ -129,7 +133,18 @@ username:      damien
          hashcat NETNTLM:       damien::::f0815aa2456bee1592b79dd780d932bccdfca772ccebe1ca:6a482841108c2404
 ```
 
+Ensuite nous utilisons hashcat pour attaquer le hash capturé du mot de passe. Voilà quelques explications sur les paramètres utilisés :
+
+- `-m 5500` : type de hash NetNTLMv1
+- `--potfile-disable` : ne pas utiliser de fichier de stockage des mots de passe déjà trouvés (permet d'avoir le même résultat si on exécute plusieurs fois la commande)
+- `-d 1` : utiliser mon GPU pour accélérer le processus
+- `hashfile_swi` : fichier texte contenant le hash à craquer
+- `dict_swi` : fichier texte contenant les mots de passe à tester (qui contient notamment `1234`)
+
+
 ![img_1.png](img_1.png)
+
+La ligne encadrée en rouge indique que hashcat a trouvé le mot de passe `1234` pour le hash capturé.
 
 ### Répondez aux questions suivantes :
 
@@ -137,9 +152,9 @@ username:      damien
 > 
 > **_Réponse :_**
 > 
-> Indiquer l'interface qu'on utilise pour créer l'AP : `interface=wlan0`
-> Indiquer le SSID du faux réseau : `ssid=HEIG-FAKE`
-> On peut encore configurer d'autres choses comme le canal utilisé, mais en l'occurrence les valeurs par défaut sont bonnes.
+> - Indiquer l'interface qu'on utilise pour créer l'AP : `interface=wlan0`
+> - Indiquer le SSID du faux réseau : `ssid=HEIG-FAKE`
+> - On peut encore configurer d'autres choses comme le canal utilisé, mais en l'occurrence les valeurs par défaut sont bonnes.
 
 ---
 
