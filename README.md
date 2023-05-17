@@ -70,6 +70,8 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 
 Certaines captures d'écran ont été prise de la capture Wireshark que nous avons effectuée, malheureusement il manque certaines parties dans celle-ci (par exemple pour les méthode d'authentifications proposées nous n'avons pas de EAP-TLS mais directement du PEAP). C'est pourquoi nous avons aussi des captures d'écran venant de la capture Wireshark fournie.
 
+Il est a noter aussi que la communication se fait entre trois parties, du client ver l'AP et de l'AP ver le serveur d'authentification.
+
 #### Requête et réponse d’authentification système ouvert
 
 Les captures d'écrans de cette section sont prises depuis notre capture Wireshark.
@@ -147,15 +149,70 @@ Puis le client va ensuite envoyer un paquet `Response` avec le type `Identity` :
 
 Nous pouvons voir dans ce paquet qu'une identité est fournie, ici il s'agit de `einet\olivier.tissotda`. Ensuite l'AP pourra communiquer avec un serveur d'authentification (RADIUS par exemple) afin de faire un Access-Request. La prochaine étape va être l'établissement d'un tunnel TLS.
 
-#### Phase hello
+#### Phase hello TLS
 
-Les paquets "request , protected EAP (PEAP)" sont les paquets envoyés par le serveur d'authentification pour faire le "hello server" TLS.
+Afin de mettre en place le tunnel TLS, dans un premier temps, le client va envoyer une trame `hello` à l'AP, ce message sera transmis au serveur d'authentification.
 
-### trucs utile, à enlever quand on rendra
+Voici à quoi ressemble la trame `Client Hello` :
 
-https://www.arubanetworks.com/techdocs/ClearPass/6.7/Aruba_DeployGd_HTML/Content/A%20802.1X%20EAP-PEAP%20Reference/EAP_PEAP_handshake.htm#About
+![TLS_hello_client](./img/TLS_hello_client.PNG)
 
-filtre utilisé pour simplifier la vue : !wlan.fc.type_subtype == 5 && !wlan.fc.type_subtype == 4 && !llc.dsap == 0x32
+On peut voir qu'elle a une en-tête `EAP` de type `EAP-PEAP` et qu'elle comporte une partie `Transport Layer Security`.
+Voici le contenu de la partie `TLS` :
+
+![TLS_hello_client_content](./img/TLS_hello_client_content.PNG)
+
+Le serveur d'authentification va répondre au client avec un message TLS `Server Hello`. Ce message est envoyé en plusieurs fragments `EAP-PEAP`, cela est nécessaire car un message EAP à une taille limite et les certificats qui sont envoyés sont assez gros. Ce message est composé de différentes parties comme le `Server Hello`, le `Certificate`, le `Server Key Exchange` et le `Server Hello Done`.
+
+![TLS_hello_server](./img/TLS_hello_server.PNG)
+
+On peut voir en haut de la capture les différents paquets `EAP-PEAP` envoyés par le serveur d'authentification. Dans le paquet TLS finale on peut voir que 7 fragments ont été envoyé pour composer le `Server Hello`. Voici le contenu du message TLS envoyé par le serveur : 
+
+![TLS_hello_server_content](./img/TLS_hello_server_content.PNG)
+
+Nous pouvons maintenant identifier les différents champs demandés :
+
+- L'encadré vert présent sur les captures de contenu montre la version TLS utilisée, ici il s'agit de `TLS 1.2`
+
+- L'encadré bleu montre le champ `random` qui est le `nonce`, il est différent pour les deux messages
+
+- L'encadré rouge montre le cipher suite et la méthode de compression. Dans le message du client, 21 cipher suite sont proposés et une méthode de compression est proposée. Le serveur répond au client avec un unique cipher suite et une unique méthode de compression, les deux auront été sélectionné parmis la liste proposée par le client. Dans notre cas le cipher suite est `TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384` et il n'y a pas de méthode de compression
+
+- L'encadré noir montre le champ `Session ID`. Il n'est pas présent chez le client dans notre capture mais uniquement dans la réponse du serveur. Il est possible par moment qu'il soit présent dans le dans le `Hello` du client (dans la capture fournie c'est le cas), car le serveur peut se rappeler des clés/algorithmes qui ont été utilisés par le passé avec ce client. (https://security.stackexchange.com/questions/188495/what-is-the-session-id-parameter-indicate-in-client-hello-and-server-hello-messa)
+
+#### Phase de transmission de certificats 
+
+Comme dit précédement la trame envoyée par le serveur contient différentes parties. Une des parties concerne la transmission des certificats :
+
+![TLS_hello_server_content_certificats](./img/TLS_hello_server_content_certificats.PNG)
+
+On peut voir que trois certificats sont envoyés au client. Le client répondra à cette trame avec un message `Client Key Exchange`, `Change Cipher Spec` et `Encrypted Hanshake message`. Ce message contient différentes informations, comme les paramètres pour le Diffie-Hellman.
+
+Ensuite il y a une partie liée au `Change cipher spec`, ce message est envoyé par le client (comme mentionné avant) et par le serveur d'authentification. Ce message permet de prévenir le client/le serveur que les prochains paquets seront protégés par les paramètres venant d'être négociés (clé et cipher suite).
+
+Voici le cipher change envoyé par le client :
+
+![TLS_client_cipher_change](./img/TLS_client_cipher_change.PNG)
+
+Et voici celui envoyé par le serveur :
+
+![TLS_server_cipher_change](./img/TLS_server_cipher_change.PNG)
+
+#### Authentification interne et transmission de la clé WPA
+
+Maintenant que la connexion est sécurisée via un tunnel TLS, on va refaire une authentification via EAP comme auparavant puis on va fournir la clé WPA (MSCHAPv2). Cependant comme nous sommes dans un tunnel TLS, il n'est plus possible de voir exactement ce qu'il se passe et wireshark va afficher ces échanges sous forme de `application data` :
+
+![WPA_key_exchange_EAP_auth](./img/WPA_key_exchange_EAP_auth.PNG)
+
+Nous pouvons voir dans les encadrés rouge les différents messages échangés dans le tunnel TLS.
+
+A la fin de la transmission TLS, un message `Success` est envoyé au client : 
+
+![WPA_EAP_auth_success](./img/WPA_EAP_auth_success.PNG)
+
+Après cela, il nous reste que la dernière étape qui concerne le 4-way handshake effectué entre le client et l'AP afin de finaliser le processus :
+
+![WPA_4_way_handshake](./img/WPA_4_way_handshake.PNG)
 
 ### Répondez aux questions suivantes :
  
