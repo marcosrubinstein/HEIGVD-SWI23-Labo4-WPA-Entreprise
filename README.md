@@ -52,32 +52,42 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 -   Etablir une connexion depuis un poste de travail (PC), un smartphone ou n'importe quel autre client WiFi. __Attention__, il est important que la connexion se fasse à 2.4 GHz pour pouvoir sniffer avec les interfaces Alfa
 - Comparer votre capture au processus d’authentification donné en théorie (n’oubliez pas les captures d'écran pour illustrer vos comparaisons !). En particulier, identifier les étapes suivantes :
 	- Requête et réponse d’authentification système ouvert
+		![](images/1a.png)
  	- Requête et réponse d’association (ou reassociation)
+		![](images/1b.png)
 	- Négociation de la méthode d’authentification entreprise (TLS?, TTLS?, PEAP?, LEAP?, autre?)
+		![](images/1c.png)
 	- Phase d’initiation
+		![](images/ident.png)
 	- Phase hello :
 		- Version TLS
 		- Suites cryptographiques et méthodes de compression proposées par le client et acceptées par l’AP
 		- Nonces
 		- Session ID
+		![](images/client_hello.png)
+		Nous n'avons pas réussi à intercepter le serveur hello donc nous mettons celui de la capture donnée avec le labo :
+		![](images/server_hello.png)
 	- Phase de transmission de certificats
 	 	- Echanges des certificats
-		- Change cipher spec
+		- Change cipher spec  
+		Les deux se trouvent dans le "server hello"
 	- Authentification interne et transmission de la clé WPA (échange chiffré, vu par Wireshark comme « Application data »)
-	- 4-way handshake
+		![](images/enc.png)
 
+	- 4-way handshake
+		![](images/key_exchange.png)
 ### Répondez aux questions suivantes :
  
 > **_Question :_** Quelle ou quelles méthode(s) d’authentification est/sont proposé(s) au client ?
 > 
 > **_Réponse :_** 
-
+Ayant configuré l'authentification comme PEAP sur mon PC, c'est ce qui a été proprosé à l'AP et a été accepté.
 ---
 
 > **_Question:_** Quelle méthode d’authentification est finalement utilisée ?
 > 
 > **_Réponse:_** 
-
+PEAP
 ---
 
 > **_Question:_**Arrivez-vous à voir l’identité du client dans la phase d'initiation ? Oui ? Non ? Pourquoi ?
