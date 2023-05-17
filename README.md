@@ -83,6 +83,8 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 > **_Question:_**Arrivez-vous à voir l’identité du client dans la phase d'initiation ? Oui ? Non ? Pourquoi ?
 > 
 > **_Réponse:_** 
+> 
+> Oui, on le voit dans le paquet "response, identity" qui est envoyé avant de commencer la handshake TLS. C'est `einet\eliott.chytil`
 
 ---
 
@@ -92,9 +94,13 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 > 
 > **_Réponse:_**
 > 
+> Oui, pour s'authentifier auprès du client.
+> 
 > - b. Le client envoie-t-il un certificat au serveur ? Pourquoi oui ou non ?
 > 
 > **_Réponse:_**
+> 
+> Non car on utilise WPA PEAP. Dans ce protocole le client s'authentifie avec son mot de passe, pas avec un certificat.
 > 
 
 ---
