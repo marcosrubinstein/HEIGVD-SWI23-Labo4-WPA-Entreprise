@@ -230,7 +230,7 @@ Après cela, il nous reste que la dernière étape qui concerne le 4-way handsha
 
 > **_Question:_**Arrivez-vous à voir l’identité du client dans la phase d'initiation ? Oui ? Non ? Pourquoi ?
 > 
-> **_Réponse:_** 
+> **_Réponse:_** Oui nous pouvons voir l'identité du client durant cette phase. L'AP envoie une requête d'authentification et le client y répond avec un paquet response Identity qui contient le username du client. Dans notre capture il s'agit de `einet\olivier.tissotda`. On peut la lire car à ce moment de l'authentification, la communication n'est pas chiffrée (pas de tunnel TLS et pas de clé pour chiffrer les messages).
 
 ---
 
@@ -238,11 +238,11 @@ Après cela, il nous reste que la dernière étape qui concerne le 4-way handsha
 > 
 > - a. Le serveur envoie-t-il un certificat au client ? Pourquoi oui ou non ?
 > 
-> **_Réponse:_**
+> **_Réponse:_** Le serveur envoie trois certificats au client afin de prouver son identité au client. Cela permet d'éviter des attaques type `MITM`. 
 > 
 > - b. Le client envoie-t-il un certificat au serveur ? Pourquoi oui ou non ?
 > 
-> **_Réponse:_**
+> **_Réponse:_** Non, car la méthode d'authentification est EAP-PEAP. Cette méthode utilise les identifiants pour s'authentifier et ne requiert pas l'utilisation d'un certificat.
 > 
 
 ---
