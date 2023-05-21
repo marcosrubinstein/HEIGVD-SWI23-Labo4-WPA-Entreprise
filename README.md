@@ -34,7 +34,7 @@ rfkill unblock wlan
 ```
 -	Pour pouvoir capturer une authentification complète, il faut se déconnecter d’un réseau et attendre 1 minute (timeout pour que l’AP « oublie » le client) 
 -	Les échanges d’authentification entreprise peuvent être facilement trouvés utilisant le filtre d’affichage « ```eap``` » dans Wireshark
--   Il est __impératif__ de bien fixer le cannal lors de vos captures
+-   Il est __impératif__ de bien fixer le canal lors de vos captures
 
 
 ## Travail à réaliser
@@ -49,11 +49,30 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 
 - Identifier l'AP le plus proche, en identifiant le canal utilisé par l’AP dont la puissance est la plus élevée (et dont le SSID est HEIG-VD...). Vous pouvez faire ceci avec ```airodump-ng```, par exemple
 
+
   ![](img/heig_aps.png)
 
 - Lancer une capture avec Wireshark
 
 - Etablir une connexion depuis un poste de travail (PC), un smartphone ou n'importe quel autre client WiFi. __Attention__, il est important que la connexion se fasse à 2.4 GHz pour pouvoir sniffer avec les interfaces Alfa
+
+  ```bash
+  sudo airodump-ng --beacons --essid HEIG-VD wlan0mon
+  ```
+
+  ![closest_ap](img/closest_ap.png)
+
+  Nous allons utiliser l'AP avec le BSSID `94:64:24:C0:0F:90`, canal 1.
+-   Lancer une capture avec Wireshark
+- Etablir une connexion depuis un poste de travail (PC), un smartphone ou n'importe quel autre client WiFi. __Attention__, il est important que la connexion se fasse à 2.4 GHz pour pouvoir sniffer avec les interfaces Alfa. Sur linux, nous pouvons utiliser `nm-connection-editor` pour fixer la connexion en 2.4GHz
+
+  ```bash
+  # On ubuntu (gnome), we don't have a button to simply disconnect from a wifi
+  # nmcli device disconnect iface wlp3s0
+  nmcli con down HEIG-VD
+  
+  # Relog after 1min
+  ```
 
 - Comparer votre capture au processus d’authentification donné en théorie (n’oubliez pas les captures d'écran pour illustrer vos comparaisons !). En particulier, identifier les étapes suivantes :
 	- Requête et réponse d’authentification système ouvert
