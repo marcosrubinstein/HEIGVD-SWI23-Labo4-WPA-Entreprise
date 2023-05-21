@@ -43,59 +43,90 @@ rfkill unblock wlan
 
 Dans cette première partie (la moins fun du labo...), vous allez capturer une connexion WPA Entreprise au réseau de l’école avec Wireshark et fournir des captures d’écran indiquant dans chaque capture les données demandées.
 
-A tittre d'exemple, voici [une connexion WPA Entreprise](files/auth.pcap) qui contient tous les éléments demandés. Vous pouvez utiliser cette capture comme guide de ce que la votre doit contenir. Vous pouvez vous en servir pour votre analyse __comme dernière ressource__ si vos captures ne donnent pas le résultat désiré ou s'il vous manquent des éléments importants dans vos tentatives de capture.
+A titre d'exemple, voici [une connexion WPA Entreprise](files/auth.pcap) qui contient tous les éléments demandés. Vous pouvez utiliser cette capture comme guide de ce que la votre doit contenir. Vous pouvez vous en servir pour votre analyse __comme dernière ressource__ si vos captures ne donnent pas le résultat désiré ou s'il vous manquent des éléments importants dans vos tentatives de capture.
 
 Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 
-- 	Identifier l'AP le plus proche, en identifiant le canal utilisé par l’AP dont la puissance est la plus élevée (et dont le SSID est HEIG-VD...). Vous pouvez faire ceci avec ```airodump-ng```, par exemple
--   Lancer une capture avec Wireshark
--   Etablir une connexion depuis un poste de travail (PC), un smartphone ou n'importe quel autre client WiFi. __Attention__, il est important que la connexion se fasse à 2.4 GHz pour pouvoir sniffer avec les interfaces Alfa
+- Identifier l'AP le plus proche, en identifiant le canal utilisé par l’AP dont la puissance est la plus élevée (et dont le SSID est HEIG-VD...). Vous pouvez faire ceci avec ```airodump-ng```, par exemple
+
+  ![](img/heig_aps.png)
+
+- Lancer une capture avec Wireshark
+
+- Etablir une connexion depuis un poste de travail (PC), un smartphone ou n'importe quel autre client WiFi. __Attention__, il est important que la connexion se fasse à 2.4 GHz pour pouvoir sniffer avec les interfaces Alfa
+
 - Comparer votre capture au processus d’authentification donné en théorie (n’oubliez pas les captures d'écran pour illustrer vos comparaisons !). En particulier, identifier les étapes suivantes :
 	- Requête et réponse d’authentification système ouvert
+	
+	  ![](img/1-opensystem.png)
+	
  	- Requête et réponse d’association (ou reassociation)
+	
+	​		![](img/1_association.png)
+	
 	- Négociation de la méthode d’authentification entreprise (TLS?, TTLS?, PEAP?, LEAP?, autre?)
+	
+	  ![](img/1_negociation.png)
+	
 	- Phase d’initiation
+	
 	- Phase hello :
 		- Version TLS
 		- Suites cryptographiques et méthodes de compression proposées par le client et acceptées par l’AP
 		- Nonces
 		- Session ID
+		
 	- Phase de transmission de certificats
+	
+	  ![](img/1_certs.png)
+	
 	 	- Echanges des certificats
 		- Change cipher spec
+		
+		  ![](img/1_changecipherspec.png)
+		
 	- Authentification interne et transmission de la clé WPA (échange chiffré, vu par Wireshark comme « Application data »)
+	
+	  ![](img/1_appdata.png)
+	
 	- 4-way handshake
+	
+	  ![](img/1_4wayhandshake.png)
 
 ### Répondez aux questions suivantes :
- 
+
 > **_Question :_** Quelle ou quelles méthode(s) d’authentification est/sont proposé(s) au client ?
-> 
-> **_Réponse :_** 
+>
+> **_Réponse :_** La méhode proposée au client est EAP-TLS
+> ![](img/2_proposed_auth.png)
 
 ---
 
 > **_Question:_** Quelle méthode d’authentification est finalement utilisée ?
-> 
-> **_Réponse:_** 
+>
+> **_Réponse:_** Sur demande du client, EAP-PEAP est finalement utilisé
+> ![](img/2_requested_auth.png)
 
 ---
 
-> **_Question:_**Arrivez-vous à voir l’identité du client dans la phase d'initiation ? Oui ? Non ? Pourquoi ?
-> 
-> **_Réponse:_** 
+> **_Question:_** Arrivez-vous à voir l’identité du client dans la phase d'initiation ? Oui ? Non ? Pourquoi ?
+>
+> **_Réponse:_** Oui.
+> ![](img/2_identity.png)
 
 ---
 
 > **_Question:_** Lors de l’échange de certificats entre le serveur d’authentification et le client :
-> 
+>
 > - a. Le serveur envoie-t-il un certificat au client ? Pourquoi oui ou non ?
-> 
-> **_Réponse:_**
-> 
+>
+> **_Réponse:_** Oui, le serveur envoie un certificat au client pour prouver son identité et sa légitimité en tant que serveur d'authentification
+>
+> ![](img/2_cert.png)
+>
 > - b. Le client envoie-t-il un certificat au serveur ? Pourquoi oui ou non ?
-> 
-> **_Réponse:_**
-> 
+>
+> **_Réponse:_** Non, la génération de certificats clients pour un système comme l'école étant trop complexe, les utilisateurs sont authentifiés uniquement avec leur nom d'utilisateur et mot de passe.
 
 ---
 
@@ -127,13 +158,21 @@ Pour implémenter l’attaque :
 
 > **_Question:_** Quel type de hash doit-on indiquer à john ou l'outil que vous avez employé pour craquer le handshake ?
 > 
-> **_Réponse:_** 
+> **_Réponse:_** Pour john, nous pouvons utiliser NETNTLM
 
 ---
 
 > **_Question:_** Quelles méthodes d’authentification sont supportées par hostapd-wpe ?
-> 
-> **_Réponse:_**
+>
+> **_Réponse:_** Selon la doc:
+>
+> > hostapd-wpe supports the following EAP types for impersonation:
+> >     1. EAP-FAST/MSCHAPv2 (Phase 0)
+> >         2. PEAP/MSCHAPv2
+> >         3. EAP-TTLS/MSCHAPv2
+> >         4. EAP-TTLS/MSCHAP
+> >         5. EAP-TTLS/CHAP
+> >         6. EAP-TTLS/PAP
 
 
 ### 3. En option, vous pouvez explorer d'autres outils comme [eapeak](https://github.com/rsmusllp/eapeak) ou [crEAP](https://github.com/W9HAX/crEAP/blob/master/crEAP.py) pour les garder dans votre arsenal de pentester.
