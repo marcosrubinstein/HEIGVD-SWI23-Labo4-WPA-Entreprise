@@ -1,0 +1,77 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 1 (0x1)
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=HEIG.VD
+        Validity
+            Not Before: May 24 11:56:45 2023 GMT
+            Not After : May 23 11:56:45 2024 GMT
+        Subject: CN=HEIG.VD
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:e3:7c:0d:46:bd:0f:43:88:f1:f3:23:90:77:13:
+                    5f:82:72:b5:5f:98:f0:de:dc:a3:59:7d:f4:3d:67:
+                    85:f5:f0:e1:34:a9:e0:2b:52:c5:32:cb:f1:b9:c7:
+                    63:47:70:8b:34:30:12:b5:fe:3c:cb:49:71:f0:aa:
+                    00:12:aa:47:2b:d6:b2:25:62:1a:04:b4:37:aa:0b:
+                    35:d1:6f:4b:c7:b1:8b:4e:b4:2d:36:94:34:1f:62:
+                    ac:f9:63:cc:21:38:00:2e:4d:94:c1:4b:97:bc:58:
+                    56:ae:b8:22:9a:1a:52:29:de:06:a3:b8:8a:1d:4d:
+                    b3:24:72:15:ad:26:67:9b:72:11:dd:58:df:42:20:
+                    c7:31:a4:71:92:78:39:f5:e8:94:be:8f:ca:80:c9:
+                    27:9f:0c:42:e9:26:32:fa:7f:fb:e9:3c:26:86:2f:
+                    2a:02:2a:07:f1:b6:50:ca:9e:eb:8c:1b:90:9f:b5:
+                    99:84:b9:d4:fd:f8:ae:45:95:87:f8:1c:cb:81:69:
+                    b1:50:e6:30:1d:97:4f:a7:17:78:0b:ec:16:94:c8:
+                    f1:45:88:18:5c:55:28:9c:c4:5c:3d:f4:d6:8e:33:
+                    58:b2:75:25:00:a4:21:a2:3a:fa:e7:31:d0:9d:bb:
+                    bc:bc:0d:d1:07:c9:47:a7:50:cd:19:95:04:89:5d:
+                    c6:2d
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Subject Key Identifier: 
+                52:BA:3A:40:EF:4C:5B:B6:4D:3B:DD:08:5D:ED:C8:04:F0:3D:39:44
+            X509v3 Authority Key Identifier: 
+                DirName:/CN=HEIG.VD
+                serial:55:9E:60:1D:9B:66:36:20:B3:88:B3:73:77:5A:95:4A:B6:41:4E:23
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        76:55:81:ae:3d:30:8b:14:fe:6a:60:0c:27:70:3e:bc:bc:43:
+        d3:c1:18:50:ac:43:1f:2e:55:37:cd:0a:b8:4e:e0:b3:8c:da:
+        8e:75:af:10:33:01:e4:d8:f5:b9:73:e6:30:a1:98:4d:4d:10:
+        3b:6e:ec:7c:d4:1c:32:dc:bf:58:38:e8:99:08:87:38:d3:ca:
+        d2:fb:e8:ff:6e:a8:bd:87:dc:c4:39:0f:8e:9e:0f:39:d2:d7:
+        e0:89:4a:92:ad:00:49:45:78:e5:56:81:61:33:05:81:0e:c5:
+        9a:8b:a6:cc:1a:93:91:54:66:c6:a1:14:67:b2:10:c3:9b:c6:
+        6b:dd:0b:4b:6a:9e:47:7f:5e:78:cc:18:12:c5:75:e2:e2:d2:
+        a5:cc:71:97:a7:38:28:55:c9:d3:02:e1:bf:5f:d5:d5:6f:39:
+        6a:c1:d4:0d:9d:93:c2:11:c2:b5:ed:9d:c4:43:7b:3b:ee:cd:
+        ae:82:fe:58:02:45:df:17:9c:e2:fe:42:1c:74:67:25:e8:a0:
+        90:18:4f:e6:12:19:1d:a7:06:8b:25:6f:68:66:32:85:00:fa:
+        33:40:5b:23:e5:f6:df:1d:b0:f7:4c:12:8e:97:a7:de:cf:5f:
+        43:59:f8:0e:7a:71:f6:f0:2a:e2:9f:83:50:fc:d6:de:f9:9d:
+        25:e3:66:b2
+-----BEGIN CERTIFICATE-----
+MIIDDjCCAfagAwIBAgIBATANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdIRUlH
+LlZEMB4XDTIzMDUyNDExNTY0NVoXDTI0MDUyMzExNTY0NVowEjEQMA4GA1UEAwwH
+SEVJRy5WRDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAON8DUa9D0OI
+8fMjkHcTX4JytV+Y8N7co1l99D1nhfXw4TSp4CtSxTLL8bnHY0dwizQwErX+PMtJ
+cfCqABKqRyvWsiViGgS0N6oLNdFvS8exi060LTaUNB9irPljzCE4AC5NlMFLl7xY
+Vq64IpoaUineBqO4ih1NsyRyFa0mZ5tyEd1Y30IgxzGkcZJ4OfXolL6PyoDJJ58M
+QukmMvp/++k8JoYvKgIqB/G2UMqe64wbkJ+1mYS51P34rkWVh/gcy4FpsVDmMB2X
+T6cXeAvsFpTI8UWIGFxVKJzEXD301o4zWLJ1JQCkIaI6+ucx0J27vLwN0QfJR6dQ
+zRmVBIldxi0CAwEAAaNvMG0wEwYDVR0lBAwwCgYIKwYBBQUHAwEwHQYDVR0OBBYE
+FFK6OkDvTFu2TTvdCF3tyATwPTlEMDcGA1UdIwQwMC6hFqQUMBIxEDAOBgNVBAMM
+B0hFSUcuVkSCFFWeYB2bZjYgs4izc3dalUq2QU4jMA0GCSqGSIb3DQEBCwUAA4IB
+AQB2VYGuPTCLFP5qYAwncD68vEPTwRhQrEMfLlU3zQq4TuCzjNqOda8QMwHk2PW5
+c+YwoZhNTRA7bux81Bwy3L9YOOiZCIc408rS++j/bqi9h9zEOQ+Ong850tfgiUqS
+rQBJRXjlVoFhMwWBDsWai6bMGpORVGbGoRRnshDDm8Zr3QtLap5Hf154zBgSxXXi
+4tKlzHGXpzgoVcnTAuG/X9XVbzlqwdQNnZPCEcK17Z3EQ3s77s2ugv5YAkXfF5zi
+/kIcdGcl6KCQGE/mEhkdpwaLJW9oZjKFAPozQFsj5fbfHbD3TBKOl6fez19DWfgO
+enH28Crin4NQ/Nbe+Z0l42ay
+-----END CERTIFICATE-----

