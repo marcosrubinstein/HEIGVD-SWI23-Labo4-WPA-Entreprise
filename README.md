@@ -164,16 +164,33 @@ Pour faire fonctionner cette attaque, __il est impératif que la victime soit co
 Pour implémenter l’attaque :
 
 - Installer [```hostapd-wpe```](https://www.kali.org/tools/hostapd-wpe/) (il existe des versions modifiées qui peuvent peut-être faciliter la tâche... je ne les connais pas mais si vous en trouvez une qui vous rend les choses plus faciles, vous pouvez l'utiliser et nous apprendre quelque chose ! Dans le doute, utiliser la version originale...). Lire la documentation [du site de l’outil](https://github.com/OpenSecurityResearch/hostapd-wpe), celle de Kali ou d’autres ressources sur Internet pour comprendre son utilisation
+
 - Modifier la configuration de ```hostapd-wpe``` pour proposer un réseau semblable (mais pas le même !!!) au réseau de l’école ou le réseau de votre préférence, sachant que dans le cas d'une attaque réelle, il faudrait utiliser le vrai SSID du réseau de la cible
+
 - Lancer une capture Wireshark
+
 - Tenter une connexion au réseau (ne pas utiliser vos identifiants réels)
+
 - Utiliser un outil de brute-force (```john```, ```hashcat``` ou ```asleap```, par exemple) pour attaquer le hash capturé (utiliser un mot de passe assez simple pour minimiser le temps)
+
+  ![](img/2_attack.png)
 
 ### Répondez aux questions suivantes :
 
 > **_Question :_** Quelles modifications sont nécessaires dans la configuration de hostapd-wpe pour cette attaque ?
+>
+> **_Réponse :_** Les deux seules lignes à modifier par rapport au fichier de configuration sont:
+>
+> - interface=wlan1mon
+> - ssid=HEIG_-_VD
+>
+> Une fois cela fait, on peut lancer l'outil avec : 
+>
+> ```bash
+> sudo hostapd-wpe hostapd-wpe.conf
+> ```
+>
 > 
-> **_Réponse :_** 
 
 ---
 
