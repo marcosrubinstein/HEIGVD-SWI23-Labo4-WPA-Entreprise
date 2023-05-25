@@ -71,7 +71,7 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 
 	- Phase d’initiation
 
-![Initiation](files/initiatin-req-resp.png)
+![Initiation](files/initiation-req-resp.png)
 
 	- Phase hello :
 		- Version TLS
