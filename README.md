@@ -49,68 +49,70 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 
 - Identifier l'AP le plus proche, en identifiant le canal utilisé par l’AP dont la puissance est la plus élevée (et dont le SSID est HEIG-VD...). Vous pouvez faire ceci avec ```airodump-ng```, par exemple
 
-
-  ![](img/heig_aps.png)
+  > ```bash
+  > sudo airodump-ng --beacons --essid HEIG-VD wlan0mon
+  > ```
+  >
+  > ![closest_ap](img/closest_ap.png)
+  >
+  > Nous allons utiliser l'AP avec le BSSID `94:64:24:C0:0F:90`, canal 1.
 
 - Lancer une capture avec Wireshark
 
 - Etablir une connexion depuis un poste de travail (PC), un smartphone ou n'importe quel autre client WiFi. __Attention__, il est important que la connexion se fasse à 2.4 GHz pour pouvoir sniffer avec les interfaces Alfa
 
-  ```bash
-  sudo airodump-ng --beacons --essid HEIG-VD wlan0mon
-  ```
-
-  ![closest_ap](img/closest_ap.png)
-
-  Nous allons utiliser l'AP avec le BSSID `94:64:24:C0:0F:90`, canal 1.
--   Lancer une capture avec Wireshark
-- Etablir une connexion depuis un poste de travail (PC), un smartphone ou n'importe quel autre client WiFi. __Attention__, il est important que la connexion se fasse à 2.4 GHz pour pouvoir sniffer avec les interfaces Alfa. Sur linux, nous pouvons utiliser `nm-connection-editor` pour fixer la connexion en 2.4GHz
-
-  ```bash
-  # On ubuntu (gnome), we don't have a button to simply disconnect from a wifi
-  # nmcli device disconnect iface wlp3s0
-  nmcli con down HEIG-VD
-  
-  # Relog after 1min
-  ```
+>  ```bash
+>  # On ubuntu (gnome), we don't have a button to simply disconnect from a wifi
+>  # nmcli device disconnect iface wlp3s0
+>  nmcli con down HEIG-VD
+>  
+>  # Relog after 1min
+>  ```
 
 - Comparer votre capture au processus d’authentification donné en théorie (n’oubliez pas les captures d'écran pour illustrer vos comparaisons !). En particulier, identifier les étapes suivantes :
-	- Requête et réponse d’authentification système ouvert
-	
-	  ![](img/1-opensystem.png)
-	
- 	- Requête et réponse d’association (ou reassociation)
-	
-	​		![](img/1_association.png)
-	
-	- Négociation de la méthode d’authentification entreprise (TLS?, TTLS?, PEAP?, LEAP?, autre?)
-	
-	  ![](img/1_negociation.png)
-	
-	- Phase d’initiation
-	
-	- Phase hello :
-		- Version TLS
-		- Suites cryptographiques et méthodes de compression proposées par le client et acceptées par l’AP
-		- Nonces
-		- Session ID
-		
-	- Phase de transmission de certificats
-	
-	  ![](img/1_certs.png)
-	
-	 	- Echanges des certificats
-		- Change cipher spec
-		
-		  ![](img/1_changecipherspec.png)
-		
-	- Authentification interne et transmission de la clé WPA (échange chiffré, vu par Wireshark comme « Application data »)
-	
-	  ![](img/1_appdata.png)
-	
-	- 4-way handshake
-	
-	  ![](img/1_4wayhandshake.png)
+
+  > **NB**: Pour faire la comparaison nous avons et la réponse aux questions, nous avons utilisé le `.pcap` fourni. Ceci est dû au fait que la capture que nous avons faite ne contient pas tous les trames du processus d'authentification WPA2 Entreprise. Elle est cependant consultable sous `./files/capture_wpa.pcapng`
+
+  - Requête et réponse d’authentification système ouvert
+
+    ![](img/1-opensystem.png)
+
+  - Requête et réponse d’association (ou reassociation)
+
+  ![](img/1_association.png)
+
+  - Négociation de la méthode d’authentification entreprise (TLS?, TTLS?, PEAP?, LEAP?, autre?)
+
+    ![](img/1_negociation.png)
+
+  - Phase d’initiation
+
+    ![](img/1_initiation.png)
+
+  - Phase hello :
+  	- Version TLS
+  	- Suites cryptographiques et méthodes de compression proposées par le client et acceptées par l’AP
+  	- Nonces
+  	- Session ID
+  	
+  	![](img/1_hello.png)
+  	
+  - Phase de transmission de certificats
+
+    ![](img/1_certs.png)
+
+   	- Echanges des certificats
+  	- Change cipher spec
+  	
+  	  ![](img/1_changecipherspec.png)
+  	
+  - Authentification interne et transmission de la clé WPA (échange chiffré, vu par Wireshark comme « Application data »)
+
+    ![](img/1_appdata.png)
+
+  - 4-way handshake
+
+    ![](img/1_4wayhandshake.png)
 
 ### Répondez aux questions suivantes :
 
@@ -130,7 +132,7 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 
 > **_Question:_** Arrivez-vous à voir l’identité du client dans la phase d'initiation ? Oui ? Non ? Pourquoi ?
 >
-> **_Réponse:_** Oui.
+> **_Réponse:_** Oui, parce qu'au moment de faire l'initiation le trafic n'est pas encore chiffré. Cette information est transmise en clair pour permettre au serveur d'authentification de savoir si le client a le droit de s'authentifier, afin de ne pas surcharger le réseau avec la montée d'un tunnel TLS qui aboutira à un refus d'authentification.
 > ![](img/2_identity.png)
 
 ---
