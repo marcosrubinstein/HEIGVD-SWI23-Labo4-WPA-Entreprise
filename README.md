@@ -52,37 +52,81 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 -   Etablir une connexion depuis un poste de travail (PC), un smartphone ou n'importe quel autre client WiFi. __Attention__, il est important que la connexion se fasse à 2.4 GHz pour pouvoir sniffer avec les interfaces Alfa
 - Comparer votre capture au processus d’authentification donné en théorie (n’oubliez pas les captures d'écran pour illustrer vos comparaisons !). En particulier, identifier les étapes suivantes :
 	- Requête et réponse d’authentification système ouvert
+
+![Requete authentification système ouvert](files/authentication-req.png)
+
+![Réponse authentification système ouvert](files/authentication-resp.png)
+
  	- Requête et réponse d’association (ou reassociation)
+
+![Requete association](files/association-req.png)
+
+![Réponse association](files/association-resp.png)
+
 	- Négociation de la méthode d’authentification entreprise (TLS?, TTLS?, PEAP?, LEAP?, autre?)
+
+![Méthode authentification](files/negoc-req.png)
+
+![Méthode authentification](files/negoc-resp.png)
+
 	- Phase d’initiation
+
+![Initiation](files/initiatin-req-resp.png)
+
 	- Phase hello :
 		- Version TLS
+
+![Version TLS](files/tls.png)
+
 		- Suites cryptographiques et méthodes de compression proposées par le client et acceptées par l’AP
+
+![Suites crypto](files/hello-req.png)
+
 		- Nonces
+
+![Nonces](files/nonce.png)
+
 		- Session ID
+
+![Session ID](files/sessionid.png)
+
 	- Phase de transmission de certificats
 	 	- Echanges des certificats
+
+![Certificats](files/certificates.png)
+
 		- Change cipher spec
+
+![Cipher spec](files/changecipherspec.png)
+
 	- Authentification interne et transmission de la clé WPA (échange chiffré, vu par Wireshark comme « Application data »)
+
+![Application data](files/applicationdata.png)
+
 	- 4-way handshake
+
+![4-way handshake](files/4wayhs.png)
 
 ### Répondez aux questions suivantes :
  
 > **_Question :_** Quelle ou quelles méthode(s) d’authentification est/sont proposé(s) au client ?
 > 
-> **_Réponse :_** 
+> **_Réponse :_** Pour se connecter au réseau de l'école, nous avons du
+> spécifier l'authentification PEAP. Il n'y a pas d'autres méthodes proposées.
 
 ---
 
 > **_Question:_** Quelle méthode d’authentification est finalement utilisée ?
 > 
-> **_Réponse:_** 
+> **_Réponse:_**  PEAP
 
 ---
 
 > **_Question:_**Arrivez-vous à voir l’identité du client dans la phase d'initiation ? Oui ? Non ? Pourquoi ?
 > 
-> **_Réponse:_** 
+> **_Réponse:_** Oui, on trouve `mehdi.salhi`
+
+![Identité](files/identity.png)
 
 ---
 
@@ -91,11 +135,14 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 > - a. Le serveur envoie-t-il un certificat au client ? Pourquoi oui ou non ?
 > 
 > **_Réponse:_**
-> 
+> Oui, le serveur envoie ses certificats pour s'authentifier auprès du client.
 > - b. Le client envoie-t-il un certificat au serveur ? Pourquoi oui ou non ?
+
+
 > 
 > **_Réponse:_**
-> 
+> Non, en mode PEAP, le client n'envoie pas de certificat car il utilise ses
+> credentials (nom d'utilisateur, mot de passe) pour s'authentifier.
 
 ---
 
