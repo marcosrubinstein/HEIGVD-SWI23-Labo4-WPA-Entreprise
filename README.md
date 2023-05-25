@@ -190,7 +190,6 @@ Pour implémenter l’attaque :
 > sudo hostapd-wpe hostapd-wpe.conf
 > ```
 >
-> 
 
 ---
 
@@ -205,12 +204,13 @@ Pour implémenter l’attaque :
 > **_Réponse:_** Selon la doc:
 >
 > > hostapd-wpe supports the following EAP types for impersonation:
-> >     1. EAP-FAST/MSCHAPv2 (Phase 0)
-> >         2. PEAP/MSCHAPv2
-> >         3. EAP-TTLS/MSCHAPv2
-> >         4. EAP-TTLS/MSCHAP
-> >         5. EAP-TTLS/CHAP
-> >         6. EAP-TTLS/PAP
+> >
+> > 1. EAP-FAST/MSCHAPv2 (Phase 0)
+> > 2. PEAP/MSCHAPv2
+> > 3. EAP-TTLS/MSCHAPv2
+> > 4. EAP-TTLS/MSCHAP
+> > 5. EAP-TTLS/CHAP
+> > 6. EAP-TTLS/PAP
 
 
 ### 3. En option, vous pouvez explorer d'autres outils comme [eapeak](https://github.com/rsmusllp/eapeak) ou [crEAP](https://github.com/W9HAX/crEAP/blob/master/crEAP.py) pour les garder dans votre arsenal de pentester.
