@@ -1,0 +1,13 @@
+wlan.fc.subtype == 0x0 // Association request
+wlan.fc.subtype == 0x1 // Association response
+wlan.fc.subtype == 0x2 // Reassociaion request
+wlan.fc.subtype == 0xb // authentication
+tls 
+eapol
+
+(wlan.addr == XX:XX:XX:XX:XX) && (wlan.fc.subtype == 0x0 || wlan.fc.subtype == 0x1 || wlan.fc.subtype == 0x2 || wlan.fc.subtype == 0xb || tls || EAPOL )
+
+(wlan.addr == 30:74:96:70:df:32) && (wlan.fc.subtype == 0x0 || wlan.fc.subtype == 0x1 || wlan.fc.subtype == 0x2 || wlan.fc.subtype == 0xb || tls || eapol )
+
+
+(wlan.addr == 30:74:96:70:df:32) && ((wlan.fc.type == 0 && (wlan.fc.subtype == 0x0 || wlan.fc.subtype == 0x1 || wlan.fc.subtype == 0x2 || wlan.fc.subtype == 0xb))) || tls || eapol
