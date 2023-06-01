@@ -168,7 +168,17 @@ Pour implémenter l’attaque :
 
 > **_Question :_** Quelles modifications sont nécessaires dans la configuration de hostapd-wpe pour cette attaque ?
 > 
-> **_Réponse :_** 
+> **_Réponse :_** Il faut modifier les paramètres suivants pour indiquer la
+> bonne interface, le ssid du réseau et le canal :
+
+```
+# Interface - Probably wlan0 for 802.11, eth0 for wired
+interface=wlan0
+
+# 802.11 Options
+ssid=HEIJE
+channel=1
+```
 
 Résultat de hostapd : 
 
@@ -304,7 +314,19 @@ meh::::edfd098018e9aba17977aa91434c48b51b6008de525f9577:fcb0037dd121c94f:coucou
 
 > **_Question:_** Quelles méthodes d’authentification sont supportées par hostapd-wpe ?
 > 
-> **_Réponse:_**
+> **_Réponse:_**  La documentation accessible sur la page https://github.com/aircrack-ng/aircrack-ng/tree/master/patches/wpe/hostapd-wpe indique les méthodes suivantes: 
+
+
+```
+hostapd-wpe supports the following EAP types for impersonation:
+
+    EAP-FAST/MSCHAPv2 (Phase 0)
+    PEAP/MSCHAPv2
+    EAP-TTLS/MSCHAPv2
+    EAP-TTLS/MSCHAP
+    EAP-TTLS/CHAP
+    EAP-TTLS/PAP
+```
 
 
 ### 3. En option, vous pouvez explorer d'autres outils comme [eapeak](https://github.com/rsmusllp/eapeak) ou [crEAP](https://github.com/W9HAX/crEAP/blob/master/crEAP.py) pour les garder dans votre arsenal de pentester.
