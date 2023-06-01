@@ -81,7 +81,7 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 > **_Question :_** Quelle ou quelles méthode(s) d’authentification est/sont proposé(s) au client ?
 > 
 > **_Réponse :_** 
-Ayant configuré l'authentification comme PEAP sur mon PC, c'est ce qui a été proprosé à l'AP et a été accepté.
+La seule méthode d'autenficitation proposée est PEAP.
 ---
 
 > **_Question:_** Quelle méthode d’authentification est finalement utilisée ?
