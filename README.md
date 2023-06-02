@@ -122,13 +122,13 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 
 ---
 
-> **_Question:_**Arrivez-vous à voir l’identité du client dans la phase d'initiation ? Oui ? Non ? Pourquoi ?
+> **_Question:_** Arrivez-vous à voir l’identité du client dans la phase d'initiation ? Oui ? Non ? Pourquoi ?
 > 
 > Oui, car en EAP le client s'identifie dès la phase d'initiation. L'identité du client est donc visible dans le paquet EAP-Response/Identity.
 
 ---
 
-> **_Question:_** Lors de l’échange de certificats entre le serveur d’authentification et §§le client :
+> **_Question:_** Lors de l’échange de certificats entre le serveur d’authentification et le client :
 > 
 > - a. Le serveur envoie-t-il un certificat au client ? Pourquoi oui ou non ?
 > 
