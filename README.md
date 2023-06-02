@@ -43,7 +43,7 @@ rfkill unblock wlan
 
 Dans cette première partie (la moins fun du labo...), vous allez capturer une connexion WPA Entreprise au réseau de l’école avec Wireshark et fournir des captures d’écran indiquant dans chaque capture les données demandées.
 
-A tittre d'exemple, voici [une connexion WPA Entreprise](files/auth.pcap) qui contient tous les éléments demandés. Vous pouvez utiliser cette capture comme guide de ce que la votre doit contenir. Vous pouvez vous en servir pour votre analyse __comme dernière ressource__ si vos captures ne donnent pas le résultat désiré ou s'il vous manquent des éléments importants dans vos tentatives de capture.
+A titre d'exemple, voici [une connexion WPA Entreprise](files/auth.pcap) qui contient tous les éléments demandés. Vous pouvez utiliser cette capture comme guide de ce que la votre doit contenir. Vous pouvez vous en servir pour votre analyse __comme dernière ressource__ si vos captures ne donnent pas le résultat désiré ou s'il vous manquent des éléments importants dans vos tentatives de capture.
 
 Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 
@@ -70,31 +70,31 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
  
 > **_Question :_** Quelle ou quelles méthode(s) d’authentification est/sont proposé(s) au client ?
 > 
-> **_Réponse :_** 
+> La seule méthode d'authentification mise à disposition dans notre capture est "Protected EAP".
 
 ---
 
 > **_Question:_** Quelle méthode d’authentification est finalement utilisée ?
 > 
-> **_Réponse:_** 
+> **_Réponse:_**  Comme nous n'en avons qu'une seule, c'est celle-ci qui est utilisée.
 
 ---
 
 > **_Question:_**Arrivez-vous à voir l’identité du client dans la phase d'initiation ? Oui ? Non ? Pourquoi ?
 > 
-> **_Réponse:_** 
+> Oui, car en EAP le client s'identifie dès la phase d'initiation. L'identité du client est donc visible dans le paquet EAP-Response/Identity.
 
 ---
 
-> **_Question:_** Lors de l’échange de certificats entre le serveur d’authentification et le client :
+> **_Question:_** Lors de l’échange de certificats entre le serveur d’authentification et §§le client :
 > 
 > - a. Le serveur envoie-t-il un certificat au client ? Pourquoi oui ou non ?
 > 
-> **_Réponse:_**
+> **_Réponse:_** Oui, afin de prouver son identité, le serveur envoi 3 certificats au client. Ceci permet d'éviter les attaques de type `Man in the middle`
 > 
 > - b. Le client envoie-t-il un certificat au serveur ? Pourquoi oui ou non ?
 > 
-> **_Réponse:_**
+> **_Réponse:_** Non, dans la méthode EAP-PEAP, des identifiants sont utilisés et non des certificats.
 > 
 
 ---
@@ -117,24 +117,38 @@ Pour implémenter l’attaque :
 - Tenter une connexion au réseau (ne pas utiliser vos identifiants réels)
 - Utiliser un outil de brute-force (```john```, ```hashcat``` ou ```asleap```, par exemple) pour attaquer le hash capturé (utiliser un mot de passe assez simple pour minimiser le temps)
 
+> Voici le déroulement de l'attaque :
+>
+> ![hostapd-wpe](img/hostapd-wpe.png)
+>
+> Une fois le challenge/response récupéré nous pouvons essayer de le cracker avec `asleap` :
+>
+> ![asleap](img/asleap.png)
+
 ### Répondez aux questions suivantes :
 
 > **_Question :_** Quelles modifications sont nécessaires dans la configuration de hostapd-wpe pour cette attaque ?
 > 
-> **_Réponse :_** 
+> **_Réponse :_** Nous avons dû changé les champs `SSID` et `Channel` pour s'adapter au réseau que l'on veut imiter. Nous aurions également pu changer le champ `Interface` pour utiliser une interface différente de celle par défaut.
 
 ---
 
 > **_Question:_** Quel type de hash doit-on indiquer à john ou l'outil que vous avez employé pour craquer le handshake ?
 > 
-> **_Réponse:_** 
+> Dans notre cas, nous avons utilisé l'outil `asleap` qui ne requiert pas de type de hash. Mais si nous avions utilisé `john` ou `hashcat`, nous aurions dû indiquer le type de hash `NETNTLM` comme indiqué par `hostapd-wpe` dans son output.
 
 ---
 
 > **_Question:_** Quelles méthodes d’authentification sont supportées par hostapd-wpe ?
 > 
-> **_Réponse:_**
+> **_Réponse:_** Selon la doc, `hostpad-wpe` supporte un total de 6 méthodes d'authentification. Celles-ci sont les suivantes :
 
+> * EAP-FAST/MSCHAPv2 (Phase 0)
+> * PEAP/MSCHAPv2
+> * EAP-TTLS/MSCHAPv2
+> * EAP-TTLS/MSCHAP
+> * EAP-TTLS/CHAP
+> * EAP-TTLS/PAP
 
 ### 3. En option, vous pouvez explorer d'autres outils comme [eapeak](https://github.com/rsmusllp/eapeak) ou [crEAP](https://github.com/W9HAX/crEAP/blob/master/crEAP.py) pour les garder dans votre arsenal de pentester.
 
