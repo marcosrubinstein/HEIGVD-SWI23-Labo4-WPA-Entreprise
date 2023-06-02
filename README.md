@@ -66,11 +66,53 @@ Pour réussir votre capture, vous pouvez procéder de la manière suivante :
 	- Authentification interne et transmission de la clé WPA (échange chiffré, vu par Wireshark comme « Application data »)
 	- 4-way handshake
 
+### Capture Wireshark
+
+> En premier lieu la station essaie de s'autenthifier en *Open System* (réponse deux trames après)
+
+![Open System](img/0_osa.png)
+
+> Une fois l'authetification acceptée, la station demande à s'associer au réseau
+
+![Association request](img/0_ass_req.png)
+
+![Association response](img/0_ass_res.png)
+
+> A ce moment là entre en jeu le tunnel TLS avec la requête d'identité de la part du serveur, via l'AP
+
+![Identity request](img/1_identity_request-response.png)
+
+![Identity response](img/1_identity_response_identity.png)
+
+> On passe donc à la phase Hello avec l'échange des random, les algorithmes TLS et les identifiants de session de la part des deux parties
+
+![Client Hello](img/2_hello_client.png)
+
+![Server Hello](img/2_hello_server.png)
+
+> Il y a ensuite la transmission de certificats. Comme il s'agit d'une session `PEAP` seul le serveur envoie son certificat, le client s'authentifiera de manière définitive après
+
+![Server certificate](img/3_server_certif_exchange.png)
+
+![Server key exchange](img/3_server_key_exchange.png)
+
+> Une fois les certificats validés et l'échange de clé effectué, les deux parties vont se mettre d'accord sur le *cipher* à utiliser pour la suite
+
+![Cipher change](img/4_change_cipher.png)
+
+> A ce moment-là l'authentification entre le serveur d'authentification et la STA peut s'effectuer. On peut voir les trames passer mais comme elles sont encapsulées dans le tunnel TLS, on ne peut pas les lire
+
+![Authentification interne](img/application_data.png)
+
+> Enfin le *4-way handshake* est effectué pour que la STA puisse s'authentifier auprès de l'AP et obtenir la clé de chiffrement WPA pour la suite des communications
+
+![4-way handshake](img/4_way_handshake.png)
+
 ### Répondez aux questions suivantes :
  
 > **_Question :_** Quelle ou quelles méthode(s) d’authentification est/sont proposé(s) au client ?
 > 
-> La seule méthode d'authentification mise à disposition dans notre capture est "Protected EAP".
+> **_Réponse:_** La seule méthode d'authentification mise à disposition dans notre capture est "Protected EAP".
 
 ---
 
@@ -135,7 +177,7 @@ Pour implémenter l’attaque :
 
 > **_Question:_** Quel type de hash doit-on indiquer à john ou l'outil que vous avez employé pour craquer le handshake ?
 > 
-> Dans notre cas, nous avons utilisé l'outil `asleap` qui ne requiert pas de type de hash. Mais si nous avions utilisé `john` ou `hashcat`, nous aurions dû indiquer le type de hash `NETNTLM` comme indiqué par `hostapd-wpe` dans son output.
+> Dans notre cas, nous avons utilisé l'outil `asleap` qui ne requiert pas de type de hash. Mais si nous avions utilisé `john` ou `hashcat`, nous aurions dû indiquer le type de hash `NETNTLM` (-m 5500) comme indiqué par `hostapd-wpe` dans son output.
 
 ---
 
